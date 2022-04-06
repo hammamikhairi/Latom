@@ -1,3 +1,5 @@
+import os
+import time
 from yaml import dump
 from constants import PATH
 from services import tracks_list_config
@@ -21,6 +23,9 @@ def main() -> None:
       refresh(f'Playlist : "{PLAY_LIST_NAME}"', endl="\n")
       print(f"{len(all)} tracks fetched.")
       selected = tracks_list_config(already_have, new, all)
+      refresh("Downloading...", endl="\n")
+      print(selected)
+      time.sleep(5)
       download_playlist_audios(selected)
 
     elif "/c/" in url or "/channel/" in url:

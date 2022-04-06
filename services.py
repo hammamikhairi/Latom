@@ -22,17 +22,20 @@ def selector(list_items:list, multiple=False) -> list:
       res = selector(list_items, True)
       return res
     else:
-      return list_items[res]
+      return res
   if not isinstance(res, int) and multiple:
-    return [list_items[i] for i in res]
+    return res
 
 def playlist_selecetor(videos: list) -> list:
   list_items = []
   for video in videos:
     list_items.append(video["title"])
 
-  selected = selector(list_items)
-  selected =  [video for video in videos if video["title"] in selected]
+  res = selector(list_items)
+  if isinstance(res, int):
+    selected = [videos[res]]
+  else:
+    selected =  [videos[i] for i in res]
   return selected
 
 
@@ -60,6 +63,7 @@ def tracks_list_config(acquired, new, all) -> list:
   mult = True
   selected= []
   if len(acquired):
+    #! paatttthhhhhhhhhh
     print(f"\nyou already have Deez tracks in : {fg.da_magenta +'~'+ PATH.split('..')[-1] + fg.rs}: ")
     for song in acquired:
       print("\t"+song["title"])
@@ -103,3 +107,4 @@ def setup_download_path() -> None:
   with open('./constants.py') as f:
     lines = f.readlines()
     print(lines)
+
