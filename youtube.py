@@ -1,5 +1,6 @@
+from re import search
 from pytube import YouTube #to install
-from youtubesearchpython import  Video, Playlist #information
+from youtubesearchpython import  Video, Playlist, ChannelsSearch, playlist_from_channel_id, Search, Channel
 from rich.console import Console
 from banner import Loader, refresh
 import yaml #logs
@@ -26,7 +27,6 @@ def get_youtube_playlist_name(url:str) -> str:
   playlist = Playlist.getInfo(url)
   return playlist["title"]
 
-
 def get_playlist_videos(url: str) -> list:
   console = Console()
   with console.status('[bold cyan]Fetching Playlist... ', speed=3, spinner="simpleDotsScrolling", spinner_style="cyan") as status:
@@ -39,17 +39,58 @@ def get_playlist_videos(url: str) -> list:
       vd = {}
       vd["title"] = video["title"]
       vd["link"] = video["link"]
+      vd["duration"] = video["duration"]
+      videos.append(vd)
+
+    checked = checker(get_current_songs(), videos)
+    name = get_youtube_playlist_name(url)
+
+    checked.append(name)
+  return checked
+
+
+def get_channel_id_name(url: str) -> str:
+
+  if "/c/" in url:
+    channels = ChannelsSearch(url.split("/")[-1], limit = 1, region = 'US')
+    channel_name = channels.result()['result'][0]['title']
+    channel_id = channels.result()['result'][0]['id']
+  else:
+    channel_id = url.split("/")[-1]
+    channel_name = Channel.get(url.split("/")[-1])['title']
+
+  return channel_id, channel_name
+
+
+
+def get_channel_videos(url: str) -> list:
+  console = Console()
+  with console.status("[bold cyan]Fetching channel", speed=3, spinner="simpleDotsScrolling", spinner_style="cyan") as status:
+
+    channel_id, channel_name = get_channel_id_name(url)
+    playlist = Playlist(playlist_from_channel_id(channel_id))
+
+    while playlist.hasMoreVideos:
+        playlist.getNextVideos()
+
+    videos = []
+    for video in playlist.videos:
+      vd = {}
+      vd["title"] = video["title"]
+      vd["link"] = video["link"]
+      vd["duration"] = video["duration"]
       videos.append(vd)
 
     checked = checker(get_current_songs(), videos)
 
+    checked.append(channel_name)
+  print(len(checked))
   return checked
-
 
 def download_single(url:str) -> None:
   console = Console()
   refresh()
-  with console.status("[bold cyan]Fetching...", speed=3, spinner="simpleDotsScrolling", spinner_style="cyan") as status:
+  with console.status("[bold cyan]Fetching", speed=3, spinner="simpleDotsScrolling", spinner_style="cyan") as status:
     name = get_youtube_video_name(url)
   refresh()
   with console.status(f"[bold cyan]Downloading : {name}", speed=3, spinner="simpleDotsScrolling", spinner_style="cyan") as status:
