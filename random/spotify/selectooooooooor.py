@@ -1,10 +1,12 @@
-from simple_term_menu import TerminalMenu
+from pick import pick
+from pick import Picker
 
-def main():
-  options = ["[a] apple", "[b] banana", "[o] orange"]
-  terminal_menu = TerminalMenu(options,title="batata", menu_cursor_style=("fg_purple", "bold"), search_highlight_style=("fg_black", "bg_cyan", "bold") )
-  menu_entry_index = terminal_menu.show()
-  print(menu_entry_index)
 
-if __name__ == "__main__":
-    main()
+title, options = 'Title', ['Option1', 'Option2', 'three', 'piss']
+picker = Picker(options, title, multiselect=True)
+def go_back(picker):
+   return None, -1
+picker.register_custom_handler(ord('h'),  go_back)
+option, index = picker.start()
+
+print(index)

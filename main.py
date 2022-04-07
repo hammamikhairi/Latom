@@ -10,12 +10,15 @@ from os import system
 
 playlist_testing_url1= "https://www.youtube.com/playlist?list=PLGkfMLpx7lj_C6pjva7Y1VaREh4qYJ8Vq"
 playlist_testing_url2= "https://www.youtube.com/playlist?list=PL-osiE80TeTsqhIuOqKhwlXsIBIdSeYtc"
+channel_testing_url= "https://www.youtube.com/channel/UCbRrwIaXV_lJLzTPtcafh2w/about"
 
-refresh("enter link : ", endl="")
-url = input()
-# url = playlist_testing_url
+
 
 def main() -> None:
+  refresh("enter link : ", endl="")
+  url = input()
+  # url = playlist_testing_url
+
   if "youtube" in url:
     if "playlist" in url:
       refresh()
@@ -24,8 +27,6 @@ def main() -> None:
       print(f"{len(all)} tracks fetched.")
       selected = tracks_list_config(already_have, new, all)
       refresh("Downloading...", endl="\n")
-      print(selected)
-      time.sleep(5)
       download_playlist_audios(selected)
 
     elif "/c/" in url or "/channel/" in url:
@@ -34,6 +35,8 @@ def main() -> None:
       refresh(f'Channel : "{channel_name}"', endl="\n")
       print(f"{len(all)} tracks fetched.")
       selected = tracks_list_config(already_have, new, all)
+      refresh("Downloading...", endl="\n")
+      download_playlist_audios(selected)
 
     else:
       print("single ??")
