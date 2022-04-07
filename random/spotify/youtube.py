@@ -1,19 +1,20 @@
-from fileinput import filename
-from pytube import YouTube
+# import music_tag
 
-youtube_video_url = 'https://www.youtube.com/watch?v=UA7NSpzG98s'
+# f = music_tag.load_file("./audio.mp3")
 
-try:
-    yt = YouTube(youtube_video_url)
+# # dict access returns a MetadataItem
+# title_item = f['title']
+
+# # MetadataItems keep track of multi-valued keys
+# print(title_item.values ) # -> ['440Hz']
+
+# # A single value can be extracted
+# print(title_item.first)  # -> '440Hz'
+# print(title_item.value ) # -> '440Hz'
+
+# # MetadataItems can also be cast to a string
+# print(str(title_item) ) # -> '440Hz'
+
+# # f.save()
 
 
-    stream =yt.streams.filter(only_audio=True).all()
-    # print(stream)
-    av = [s for s in stream if "webm" in str(s)]
-    # print(av)
-    av[-1].download('../../Music', filename='god.webm')
-
-    # av[-1].streams.get_audio_only().download(output_path='.', filename='audio')
-    # print('YouTube video audio downloaded successfully')
-except Exception as e:
-    print(e)

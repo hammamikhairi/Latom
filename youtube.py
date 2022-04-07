@@ -1,4 +1,3 @@
-from re import search
 from pytube import YouTube #to install
 from youtubesearchpython import  Video, Playlist, ChannelsSearch, playlist_from_channel_id, Search, Channel
 from rich.console import Console
@@ -14,9 +13,9 @@ youtube_video_url = 'https://www.youtube.com/watch?v=UA7NSpzG98s'
 
 def download_youtube_audio(url: str, filename: str) -> None:
   yt = YouTube(url)
-  stream = yt.streams.filter(only_audio=True)
-  av = [s for s in stream if "webm" in str(s)]
-  av[-1].download(f"{PATH}", filename)
+  streams = yt.streams.filter(only_audio=True)
+  av = [s for s in streams if "webm" in str(s)]
+  # av[-1].download(f"{PATH}", filename)
 
 
 def get_youtube_video_name(url: str) -> str :
@@ -29,7 +28,7 @@ def get_youtube_playlist_name(url:str) -> str:
 
 def get_playlist_videos(url: str) -> list:
   console = Console()
-  with console.status('[bold cyan]Fetching Playlist... ', speed=3, spinner="simpleDotsScrolling", spinner_style="cyan") as status:
+  with console.status('[bold cyan]Fetching Playlist ', speed=3, spinner="simpleDotsScrolling", spinner_style="cyan") as status:
     videos = []
     playlist = Playlist(url)
     while playlist.hasMoreVideos:
@@ -50,7 +49,8 @@ def get_playlist_videos(url: str) -> list:
 
 
 def get_channel_id_name(url: str) -> str:
-
+  if url.split("/")[-1] in ["videos", "featured", "playlists", "channels", "about"]:
+    url = "/".join([slice for slice in url.split("/")[:-1]])
   if "/c/" in url:
     channels = ChannelsSearch(url.split("/")[-1], limit = 1, region = 'US')
     channel_name = channels.result()['result'][0]['title']

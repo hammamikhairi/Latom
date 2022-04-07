@@ -6,7 +6,8 @@ from time import sleep
 from sty import fg
 
 def selector(list_items:list, multiple=False) -> list:
-  list_items.append("Select multiple") if not multiple else None
+  list_items.append("> Select multiple") if not multiple else None
+  list_items.append("> Delete unwanted") if not multiple else None
   terminal_menu = TerminalMenu(
                       list_items,
                       title="Choose Bitch",
@@ -17,19 +18,27 @@ def selector(list_items:list, multiple=False) -> list:
                     )
   res = terminal_menu.show()
   if isinstance(res, int):
-    if list_items[res] == "Select multiple":
+    if list_items[res] == "> Select multiple":
+      list_items.pop()
       list_items.pop()
       res = selector(list_items, True)
+      return res
+    elif list_items[res] == "> Delete unwanted":
+      list_items.pop()
+      list_items.pop()
+      res = selector(list_items, True)
+      res = [i for i in range(len(list_items)) if i not in res]
       return res
     else:
       return res
   if not isinstance(res, int) and multiple:
     return res
 
+
 def playlist_selecetor(videos: list) -> list:
   list_items = []
   for video in videos:
-    list_items.append(video["title"])
+    list_items.append(f"({video['duration']})  {video['title'][:60]}" )
 
   res = selector(list_items)
   if isinstance(res, int):
