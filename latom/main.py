@@ -27,7 +27,7 @@ def main() -> None:
       refresh(f'Playlist : "{PLAY_LIST_NAME}"', endl="\n")
       print(f"{len(all)} tracks fetched.")
       selected = tracks_list_config(already_have, new, all)
-      refresh("Downloading...", endl="\n")
+      refresh()
       print(selected)
       download_playlist_audios(selected)
 
@@ -37,7 +37,7 @@ def main() -> None:
       refresh(f'Channel : "{channel_name}"', endl="\n")
       print(f"{len(all)} tracks fetched.")
       selected = tracks_list_config(already_have, new, all)
-      refresh("Downloading...", endl="\n")
+      refresh()
       print(selected)
       download_playlist_audios(selected)
 
