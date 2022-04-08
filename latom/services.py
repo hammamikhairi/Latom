@@ -81,12 +81,20 @@ def tracks_list_config(acquired, new, all) -> list:
     for song in new:
       print("\t"+song["title"]+ " "+fg.li_cyan+ song["duration"]+ fg.rs)
 
-    conf = input("\nDownload new tracks only? (y/n): ")
+    try:
+      conf = input("\nDownload new tracks only? (y/n): ")
+    except:
+      print("Byee!")
+      system(exit(69))
     refresh("Download all ? ", endl="")
-    mult = input()
+    try:
+      mult = input()
+    except KeyboardInterrupt:
+      print("Byee!")
+      system(exit(69))
     refresh()
-    mult = True if mult in ["", "y"] else False
-    if conf in ["y", ""]:
+    mult = True if mult in ["", "y", "yes"] else False
+    if conf in ["y", "", "yes"]:
       if not mult:
         selected = playlist_selecetor(new)
       else:
@@ -101,8 +109,12 @@ def tracks_list_config(acquired, new, all) -> list:
     print("\nTracks : ")
     for song in new:
       print("\t"+song["title"]+ " "+fg.li_cyan+ song["duration"]+ fg.rs)
-    mult = input("\nDownload all ? ")
-    mult = True if mult in ["", "y"] else False
+    try:
+      mult = input("\nDownload all ? ")
+    except KeyboardInterrupt:
+      print("Byee!")
+      system(exit(69))
+    mult = True if mult in ["", "y", "yes"] else False
     refresh()
     if not mult:
       selected = playlist_selecetor(all)

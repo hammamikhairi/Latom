@@ -1,7 +1,8 @@
+from os import system
 from pytube import YouTube #to install
 from youtubesearchpython import  Video, Playlist, ChannelsSearch, playlist_from_channel_id, Search, Channel
 from rich.console import Console
-from banner import Loader, refresh
+from banner import Loader, refresh, rerror
 import yaml #logs
 from time import sleep
 from constants import PATH
@@ -26,11 +27,36 @@ def get_youtube_playlist_name(url:str) -> str:
   playlist = Playlist.getInfo(url)
   return playlist["title"]
 
+def get_channel_id_name(url: str) -> str:
+  if url.split("/")[-1] in ["videos", "featured", "playlists", "channels", "about"]:
+    url = "/".join([slice for slice in url.split("/")[:-1]])
+  if "/c/" in url:
+    channels = ChannelsSearch(url.split("/")[-1], limit = 1, region = 'US')
+    channel_name = channels.result()['result'][0]['title']
+    channel_id = channels.result()['result'][0]['id']
+  else:
+    channel_id = url.split("/")[-1]
+    try:
+      channel_name = Channel.get(url.split("/")[-1])['title']
+    except Exception as e:
+      rerror("Check your channel link")
+      system(exit(69))
+
+  return channel_id, channel_name
+
 def get_playlist_videos(url: str) -> list:
   console = Console()
   with console.status('[bold cyan]Fetching Playlist ', speed=3, spinner="simpleDotsScrolling", spinner_style="cyan") as status:
     videos = []
-    playlist = Playlist(url)
+    try:
+      playlist = Playlist(url)
+    except Exception as e:
+      if "Name" in str(e):
+        rerror("Check your internet bro")
+      else:
+        rerror("Check your playlist link")
+      system(exit(69))
+
     while playlist.hasMoreVideos:
       playlist.getNextVideos()
 
@@ -48,19 +74,8 @@ def get_playlist_videos(url: str) -> list:
   return checked
 
 
-def get_channel_id_name(url: str) -> str:
-  if url.split("/")[-1] in ["videos", "featured", "playlists", "channels", "about"]:
-    url = "/".join([slice for slice in url.split("/")[:-1]])
-  if "/c/" in url:
-    channels = ChannelsSearch(url.split("/")[-1], limit = 1, region = 'US')
-    channel_name = channels.result()['result'][0]['title']
-    channel_id = channels.result()['result'][0]['id']
-  else:
-    channel_id = url.split("/")[-1]
-    channel_name = Channel.get(url.split("/")[-1])['title']
-
-  return channel_id, channel_name
-
+# def sorter(playlist: list) -> list:
+#   return sorted(videos, key=lambda k: k['duration'])
 
 
 def get_channel_videos(url: str) -> list:
@@ -69,6 +84,7 @@ def get_channel_videos(url: str) -> list:
 
     channel_id, channel_name = get_channel_id_name(url)
     playlist = Playlist(playlist_from_channel_id(channel_id))
+
 
     while playlist.hasMoreVideos:
         playlist.getNextVideos()
@@ -84,7 +100,6 @@ def get_channel_videos(url: str) -> list:
     checked = checker(get_current_songs(), videos)
 
     checked.append(channel_name)
-  print(len(checked))
   return checked
 
 def download_single(url:str) -> None:

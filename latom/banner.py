@@ -12,11 +12,23 @@ banner = fg.li_cyan + """
 |_____|  \__,_|  \__|  \___/  |_| |_| |_|
 
 """ + fg.rs
+error = fg.da_red + """
+  ___   _ __   _ __    ___    _ __
+ / _ \ | '__| | '__|  / _ \  | '__|
+|  __/ | |    | |    | (_) | | |
+ \___| |_|    |_|     \___/  |_|
+
+""" + fg.rs
 
 def refresh(message:str = None, endl:str = "\n") -> None:
   system("clear")
   print(banner)
   print(message, end=endl) if message else None
+
+def rerror(message:str = None) -> None:
+  system("clear")
+  print(error)
+  print(message) if message else None
 
 class Loader:
   def loading(self) -> None:
