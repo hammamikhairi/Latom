@@ -4,6 +4,7 @@ from yaml import dump
 from constants import PATH
 from services import tracks_list_config
 from banner import refresh
+
 from youtube import (download_playlist_audios, download_single,
                      get_channel_videos, get_playlist_videos)
 from os import system
@@ -13,7 +14,6 @@ playlist_testing_url2= "https://www.youtube.com/playlist?list=PL-osiE80TeTsqhIuO
 channel_testing_url= "https://www.youtube.com/channel/UCbRrwIaXV_lJLzTPtcafh2w/about"
 
 
-#delete
 
 def main() -> None:
   refresh("enter link : ", endl="")
@@ -28,6 +28,7 @@ def main() -> None:
       print(f"{len(all)} tracks fetched.")
       selected = tracks_list_config(already_have, new, all)
       refresh("Downloading...", endl="\n")
+      print(selected)
       download_playlist_audios(selected)
 
     elif "/c/" in url or "/channel/" in url:
@@ -37,6 +38,7 @@ def main() -> None:
       print(f"{len(all)} tracks fetched.")
       selected = tracks_list_config(already_have, new, all)
       refresh("Downloading...", endl="\n")
+      print(selected)
       download_playlist_audios(selected)
 
     else:
