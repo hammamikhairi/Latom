@@ -20,6 +20,9 @@ def main() -> None:
   url = input()
   # url = playlist_testing_url
 
+
+  if "spotify" in url:
+    refresh("spotify link not supported yet")
   if "youtube" in url:
     if "playlist" in url:
       refresh()
