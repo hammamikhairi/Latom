@@ -1,14 +1,15 @@
-from os import system
 from pytube import YouTube #to install
 from youtubesearchpython import  Video, Playlist, ChannelsSearch, playlist_from_channel_id, Channel
 from rich.console import Console
 from banner import refresh, rerror
-from time import sleep
 from constants import PATH
+from soang import Soang
+from time import sleep
+from os import system
 from pprint import pprint #logs
 import yaml #logs
 
-from services import checker, get_current_songs, title_formatter
+from services import checker, get_current_songs
 
 youtube_video_url = 'https://www.youtube.com/watch?v=UA7NSpzG98s'
 # pprint.pprint()
@@ -69,12 +70,7 @@ def fetcher(playlist: Playlist) -> list:
 
   videos = []
   for video in playlist.videos:
-    vd = {}
-    vd["title"] = title_formatter(video["title"])
-    vd["link"] = video["link"]
-    vd["duration"] = video["duration"]
-    videos.append(vd)
-
+    videos.append(Soang(video["title"], video["duration"], video["link"]))
   checked = checker(get_current_songs(), videos)
   return checked
 
@@ -103,7 +99,7 @@ def get_playlist_videos(url: str) -> list:
     name = get_youtube_playlist_name(url)
 
     checked.append(name)
-  return checked
+    return checked
 
 
 
@@ -142,6 +138,6 @@ def download_playlist_audios(videos: list) -> None:
   """
   console = Console()
   for video in videos:
-    with console.status(f"[bold cyan]Downloading : {video['title']}", speed=3, spinner="simpleDotsScrolling", spinner_style="cyan") as status:
-      download_youtube_audio(video["link"], f'{video["title"]}.webm')
-      print(video['title'])
+    with console.status(f"[bold cyan]Downloading : {video.title}", speed=3, spinner="simpleDotsScrolling", spinner_style="cyan") as status:
+      download_youtube_audio(video.link, f'{video.title}.webm')
+      print(video.title)

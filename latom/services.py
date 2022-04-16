@@ -5,7 +5,6 @@ from os import path, system
 from time import sleep
 from sty import fg
 
-from soang import Saong
 
 # TODO - use Pyinquirer instead of simple_term_menu
 def selector(list_items:list, multiple=False) -> list:

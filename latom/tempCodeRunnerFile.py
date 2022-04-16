@@ -1,1 +1,0 @@
-ed = fetcher(playlist)
