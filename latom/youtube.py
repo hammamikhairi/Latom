@@ -1,18 +1,27 @@
 from os import system
 from pytube import YouTube #to install
-from youtubesearchpython import  Video, Playlist, ChannelsSearch, playlist_from_channel_id, Search, Channel
+from youtubesearchpython import  Video, Playlist, ChannelsSearch, playlist_from_channel_id, Channel
 from rich.console import Console
-from banner import Loader, refresh, rerror
-import yaml #logs
+from banner import refresh, rerror
 from time import sleep
 from constants import PATH
+from pprint import pprint #logs
+import yaml #logs
 
-from services import checker, get_current_songs
+from services import checker, get_current_songs, title_formatter
 
 youtube_video_url = 'https://www.youtube.com/watch?v=UA7NSpzG98s'
+# pprint.pprint()
 
 
 def download_youtube_audio(url: str, filename: str) -> None:
+  """
+    Downloads the audio (format : webm) from youtube video in PATH directory
+
+    Args:
+        url (str): youtube url
+        filename (str): filename should be with extension
+  """
   yt = YouTube(url)
   streams = yt.streams.filter(only_audio=True)
   av = [s for s in streams if "webm" in str(s)]
@@ -28,6 +37,16 @@ def get_youtube_playlist_name(url:str) -> str:
   return playlist["title"]
 
 def get_channel_id_name(url: str) -> str:
+  """
+  Get channel id and name from youtube url 
+  (from id in url)
+
+  Args:
+      url (str): youtube url
+
+  Returns:
+      str: 2 seperate strings (id, name)
+  """
   if url.split("/")[-1] in ["videos", "featured", "playlists", "channels", "about"]:
     url = "/".join([slice for slice in url.split("/")[:-1]])
   if "/c/" in url:
@@ -38,16 +57,39 @@ def get_channel_id_name(url: str) -> str:
     channel_id = url.split("/")[-1]
     try:
       channel_name = Channel.get(url.split("/")[-1])['title']
-    except Exception as e:
+    except Exception:
       rerror("Check your channel link")
       system(exit(69))
 
   return channel_id, channel_name
 
+def fetcher(playlist: Playlist) -> list:
+  while playlist.hasMoreVideos:
+    playlist.getNextVideos()
+
+  videos = []
+  for video in playlist.videos:
+    vd = {}
+    vd["title"] = title_formatter(video["title"])
+    vd["link"] = video["link"]
+    vd["duration"] = video["duration"]
+    videos.append(vd)
+
+  checked = checker(get_current_songs(), videos)
+  return checked
+
 def get_playlist_videos(url: str) -> list:
+  """
+    get playlist videos from youtube url
+
+    Args:
+        url (str): youtube playlist url "~/plalist/:id"
+
+    Returns:
+        list: of list[new, acquired, all, name] each is a list of dict{title, duration, link}
+  """
   console = Console()
   with console.status('[bold cyan]Fetching Playlist ', speed=3, spinner="simpleDotsScrolling", spinner_style="cyan") as status:
-    videos = []
     try:
       playlist = Playlist(url)
     except Exception as e:
@@ -56,53 +98,31 @@ def get_playlist_videos(url: str) -> list:
       else:
         rerror("Check your playlist link")
       system(exit(69))
-
-    while playlist.hasMoreVideos:
-      playlist.getNextVideos()
-
-    for video in playlist.videos:
-      vd = {}
-      vd["title"] = video["title"]
-      vd["link"] = video["link"]
-      vd["duration"] = video["duration"]
-      videos.append(vd)
-
-    checked = checker(get_current_songs(), videos)
+    sleep(5)
+    checked = fetcher(playlist)
     name = get_youtube_playlist_name(url)
 
     checked.append(name)
   return checked
 
 
-# def sorter(playlist: list) -> list:
-#   return sorted(videos, key=lambda k: k['duration'])
-
 
 def get_channel_videos(url: str) -> list:
+  """
+    practicallly same as get_playlist_videos
+  """
   console = Console()
   with console.status("[bold cyan]Fetching channel", speed=3, spinner="simpleDotsScrolling", spinner_style="cyan") as status:
-
     channel_id, channel_name = get_channel_id_name(url)
     playlist = Playlist(playlist_from_channel_id(channel_id))
-
-
-    while playlist.hasMoreVideos:
-        playlist.getNextVideos()
-
-    videos = []
-    for video in playlist.videos:
-      vd = {}
-      vd["title"] = video["title"]
-      vd["link"] = video["link"]
-      vd["duration"] = video["duration"]
-      videos.append(vd)
-
-    checked = checker(get_current_songs(), videos)
-
+    checked = fetcher(playlist)
     checked.append(channel_name)
   return checked
 
 def download_single(url:str) -> None:
+  """
+  Implements the interface for download_youtube_audio
+  """
   console = Console()
   refresh()
   with console.status("[bold cyan]Fetching", speed=3, spinner="simpleDotsScrolling", spinner_style="cyan") as status:
@@ -110,13 +130,18 @@ def download_single(url:str) -> None:
   refresh()
   with console.status(f"[bold cyan]Downloading : {name}", speed=3, spinner="simpleDotsScrolling", spinner_style="cyan") as status:
     download_youtube_audio(url, name+".webm")
+  #TODO: add progress bar and make the fucking interface prettier
   print(name)
 
 def download_playlist_audios(videos: list) -> None:
+  """
+  Da loop
+
+  Args:
+      videos : list of dict
+  """
   console = Console()
   for video in videos:
     with console.status(f"[bold cyan]Downloading : {video['title']}", speed=3, spinner="simpleDotsScrolling", spinner_style="cyan") as status:
       download_youtube_audio(video["link"], f'{video["title"]}.webm')
       print(video['title'])
-
-

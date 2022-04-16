@@ -1,10 +1,11 @@
 from simple_term_menu import TerminalMenu
 from banner import refresh
-from constants import PATH
+from constants import ILLEGAL_CHARS, PATH
 from os import path, system
 from time import sleep
 from sty import fg
 
+# TODO - use Pyinquirer instead of simple_term_menu
 def selector(list_items:list, multiple=False) -> list:
   list_items.append("> Select multiple") if not multiple else None
   list_items.append("> Delete unwanted") if not multiple else None
@@ -52,11 +53,24 @@ def get_current_songs() -> list:
   system(f"tree -i {PATH} > .songs")
   with open("./.songs", "r") as f:
     lines = f.readlines()
-    songs = [line.split(".")[0] for line in lines if line.count(".")>0]
+    lines.remove(PATH+"\n")
+    songs = [line.replace(".webm\n", "") for line in lines if line.count(".webm")]
   return songs
 
 
 def checker(current_songs:list, videos_to_download:list) -> list:
+  """
+    splits the list of videos to download into two lists:
+    - already acquired
+    - new
+
+    Args:
+        current_songs (list): _description_
+        videos_to_download (list): _description_
+
+    Returns:
+        list: of list of dict{title, duration, url}
+  """  """"""
   acquired = []
   for video in videos_to_download:
     for song in current_songs:
@@ -67,6 +81,9 @@ def checker(current_songs:list, videos_to_download:list) -> list:
 
   return [acquired, new, videos_to_download]
 
+
+def title_formatter(title:str) -> str:
+  return "".join([i for i in title if i not in ILLEGAL_CHARS])
 
 def tracks_list_config(acquired, new, all) -> list:
   mult = True
@@ -84,13 +101,13 @@ def tracks_list_config(acquired, new, all) -> list:
     try:
       conf = input("\nDownload new tracks only? (y/n): ")
     except:
-      print("Byee!")
+      refresh("Byee!")
       system(exit(69))
     refresh("Download all ? ", endl="")
     try:
       mult = input()
     except KeyboardInterrupt:
-      print("Byee!")
+      refresh("Byee!")
       system(exit(69))
     refresh()
     mult = True if mult in ["", "y", "yes"] else False
@@ -112,7 +129,7 @@ def tracks_list_config(acquired, new, all) -> list:
     try:
       mult = input("\nDownload all ? ")
     except KeyboardInterrupt:
-      print("Byee!")
+      refresh("Byee!")
       system(exit(69))
     mult = True if mult in ["", "y", "yes"] else False
     refresh()
