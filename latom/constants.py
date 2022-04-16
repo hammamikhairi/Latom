@@ -1,2 +1,2 @@
-PATH = "../../Music"
+PATH = "~/Music"
 ILLEGAL_CHARS = ["?", ">", "<", "|", ":", "/", "\\", "*"]

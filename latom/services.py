@@ -5,6 +5,8 @@ from os import path, system
 from time import sleep
 from sty import fg
 
+from soang import Saong
+
 # TODO - use Pyinquirer instead of simple_term_menu
 def selector(list_items:list, multiple=False) -> list:
   list_items.append("> Select multiple") if not multiple else None
@@ -50,10 +52,13 @@ def playlist_selecetor(videos: list) -> list:
 
 
 def get_current_songs() -> list:
-  system(f"tree -i {PATH} > .songs")
-  with open("./.songs", "r") as f:
+
+  filename = path.split(path.abspath(__file__))
+  curr_songs_path = filename[0] + "/.songs"
+
+  system(f"tree {PATH} > {curr_songs_path}")
+  with open(curr_songs_path, "r") as f:
     lines = f.readlines()
-    lines.remove(PATH+"\n")
     songs = [line.replace(".webm\n", "") for line in lines if line.count(".webm")]
   return songs
 
@@ -64,26 +69,19 @@ def checker(current_songs:list, videos_to_download:list) -> list:
     - already acquired
     - new
 
-    Args:
-        current_songs (list): _description_
-        videos_to_download (list): _description_
-
     Returns:
         list: of list of dict{title, duration, url}
   """  """"""
   acquired = []
   for video in videos_to_download:
     for song in current_songs:
-      if video["title"] in song  or video["title"] == song:
+      if video.title in song or video.title == song:
         acquired.append(video)
 
-  new = [video for video in videos_to_download if video not in acquired]
+  new = [video.title for video in videos_to_download if video not in acquired]
 
   return [acquired, new, videos_to_download]
 
-
-def title_formatter(title:str) -> str:
-  return "".join([i for i in title if i not in ILLEGAL_CHARS])
 
 def tracks_list_config(acquired, new, all) -> list:
   mult = True
@@ -92,11 +90,11 @@ def tracks_list_config(acquired, new, all) -> list:
     #! paatttthhhhhhhhhh
     print(f"\nyou already have Deez tracks in : {fg.da_magenta +'~'+ PATH.split('..')[-1] + fg.rs}: ")
     for song in acquired:
-      print("\t"+song["title"])
+      print("\t"+song.title)
 
     print("\nNew tracks : ")
     for song in new:
-      print("\t"+song["title"]+ " "+fg.li_cyan+ song["duration"]+ fg.rs)
+      print("\t"+song.title+ " "+fg.li_cyan+ song.title+ fg.rs)
 
     try:
       conf = input("\nDownload new tracks only? (y/n): ")
@@ -125,7 +123,7 @@ def tracks_list_config(acquired, new, all) -> list:
   else:
     print("\nTracks : ")
     for song in new:
-      print("\t"+song["title"]+ " "+fg.li_cyan+ song["duration"]+ fg.rs)
+      print("\t" + song)
     try:
       mult = input("\nDownload all ? ")
     except KeyboardInterrupt:
