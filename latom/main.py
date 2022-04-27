@@ -22,7 +22,7 @@ def main() -> None:
 
 
   if "spotify" in url:
-    refresh("spotify link not supported yet")
+    pass
   if "youtube" in url:
     if "playlist" in url:
       refresh()

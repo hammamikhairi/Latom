@@ -1,15 +1,19 @@
-from pytube import YouTube #to install
-from youtubesearchpython import  Video, Playlist, ChannelsSearch, playlist_from_channel_id, Channel
+import json
+import os
+from os import system
+from pprint import pprint  # logs
+from time import sleep
+
+import pafy
+import yaml  # logs
 from rich.console import Console
+from youtubesearchpython import (Channel, ChannelsSearch, Playlist, Video,
+                                 VideosSearch, playlist_from_channel_id)
+
 from banner import refresh, rerror
 from constants import PATH
-from soang import Soang
-from time import sleep
-from os import system
-from pprint import pprint #logs
-import yaml #logs
-
 from services import checker, get_current_songs
+from soang import Soang
 
 youtube_video_url = 'https://www.youtube.com/watch?v=UA7NSpzG98s'
 # pprint.pprint()
@@ -23,11 +27,18 @@ def download_youtube_audio(url: str, filename: str) -> None:
         url (str): youtube url
         filename (str): filename should be with extension
   """
-  yt = YouTube(url)
-  streams = yt.streams.filter(only_audio=True)
-  av = [s for s in streams if "webm" in str(s)]
-  av[-1].download(f"{PATH}", filename)
+  # yt = YouTube(url)
+  # streams = yt.streams.filter(only_audio=True)
+  # av = [s for s in streams if "webm" in str(s)]
+  # av[-1].download(f"{PATH}", filename)
+  yt = pafy.new(url)
+  audiostreams = yt.audiostreams
+  streams = [i for i in audiostreams if i.extension == "m4a"]
+  #ANCHOR - dont forget this dirty hack
+  os.chdir("../Music")
+  streams[-1].download(filename + ".m4a",quiet=True)
 
+download_youtube_audio("https://www.youtube.com/watch?v=UA7NSpzG98s", "test")
 
 def get_youtube_video_name(url: str) -> str :
   video_data = Video.get(url)
@@ -67,7 +78,7 @@ def get_channel_id_name(url: str) -> str:
 def fetcher(playlist: Playlist) -> list:
   while playlist.hasMoreVideos:
     playlist.getNextVideos()
-
+    
   videos = []
   for video in playlist.videos:
     videos.append(Soang(video["title"], video["duration"], video["link"]))
@@ -141,3 +152,16 @@ def download_playlist_audios(videos: list) -> None:
     with console.status(f"[bold cyan]Downloading : {video.title}", speed=3, spinner="simpleDotsScrolling", spinner_style="cyan") as status:
       download_youtube_audio(video.link, f'{video.title}.webm')
       print(video.title)
+
+
+##! search
+
+# results = VideosSearch('Rap God - lyrics', limit = 5).result()["result"]
+# res = []
+# for result in results:
+#   res.append(Soang(result["title"], result["duration"], result["link"]))
+#   pass
+
+
+
+# print(json.dumps(results, sort_keys=False, indent=4))

@@ -40,7 +40,7 @@ def selector(list_items:list, multiple=False) -> list:
 def playlist_selecetor(videos: list) -> list:
   list_items = []
   for video in videos:
-    list_items.append(f"({video['duration']})  {video['title'][:60]}" )
+    list_items.append(f"({video.duration})  {video.title[:60]}" )
 
   res = selector(list_items)
   if isinstance(res, int):
