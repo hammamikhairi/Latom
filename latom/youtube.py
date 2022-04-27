@@ -35,6 +35,7 @@ def download_youtube_audio(url: str, filename: str) -> None:
   audiostreams = yt.audiostreams
   streams = [i for i in audiostreams if i.extension == "m4a"]
   #ANCHOR - dont forget this dirty hack
+  #!SECTION - ADD A CALLBACK FOR DOWNLOADING
   os.chdir("../Music")
   streams[-1].download(filename + ".m4a",quiet=True)
 
