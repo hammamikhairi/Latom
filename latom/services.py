@@ -1,9 +1,16 @@
-from simple_term_menu import TerminalMenu
-from banner import refresh
-from constants import ILLEGAL_CHARS, PATH
+import os
+import urllib.request
 from os import path, system
 from time import sleep
+
+import mutagen
+from mutagen.mp4 import MP4, MP4Cover, MP4Tags
+from simple_term_menu import TerminalMenu
 from sty import fg
+
+from banner import refresh
+from constants import ILLEGAL_CHARS, PATH
+from soang import Soang
 
 
 # TODO - use Pyinquirer instead of simple_term_menu
@@ -58,7 +65,7 @@ def get_current_songs() -> list:
   system(f"tree {PATH} > {curr_songs_path}")
   with open(curr_songs_path, "r") as f:
     lines = f.readlines()
-    songs = [line.replace(".webm\n", "") for line in lines if line.count(".webm")]
+    songs = [line.replace(".m4a\n", "") for line in lines if line.count(".m4a")]
   return songs
 
 
@@ -77,7 +84,7 @@ def checker(current_songs:list, videos_to_download:list) -> list:
       if video.title in song or video.title == song:
         acquired.append(video)
 
-  new = [video.title for video in videos_to_download if video not in acquired]
+  new = [video for video in videos_to_download if video not in acquired]
 
   return [acquired, new, videos_to_download]
 
@@ -87,13 +94,13 @@ def tracks_list_config(acquired, new, all) -> list:
   selected= []
   if len(acquired):
     #! paatttthhhhhhhhhh
-    print(f"\nyou already have Deez tracks in : {fg.da_magenta +'~'+ PATH.split('..')[-1] + fg.rs}: ")
+    print(f"\nyou already have Deez tracks in : {fg.da_magenta +''+ PATH.split('..')[-1] + fg.rs}: ")
     for song in acquired:
-      print("\t"+song.title)
+      print("\t"+ song.title)
 
     print("\nNew tracks : ")
     for song in new:
-      print("\t"+song.title+ " "+fg.li_cyan+ song.title+ fg.rs)
+      print("\t" + song.title)
 
     try:
       conf = input("\nDownload new tracks only? (y/n): ")
@@ -122,7 +129,7 @@ def tracks_list_config(acquired, new, all) -> list:
   else:
     print("\nTracks : ")
     for song in new:
-      print("\t" + song)
+      print("\t" + song.title)
     try:
       mult = input("\nDownload all ? ")
     except KeyboardInterrupt:
@@ -136,10 +143,27 @@ def tracks_list_config(acquired, new, all) -> list:
       selected = all
   return selected
 
+def write_metadata(name: str, song:Soang) -> None:
+  with open(PATH + "/" +name, 'r+b') as file:
+    if song.Spotify:
+      pass
+    else:
+      media_file = mutagen.File(file, easy=True)
+      media_file['comment'] = song.comment
+      media_file.save()
+  set_cover(name, song.cover)
 
-def setup_download_path() -> None:
-  path = path.relpath('/home/khairi/Music')
-  with open('./constants.py') as f:
-    lines = f.readlines()
-    print(lines)
+def set_cover(name: str, link:str) -> None:
+  urllib.request.urlretrieve(link, "tempo.jpg")
+  metadata = MP4(PATH + "/" +name) 
+  _file = open(PATH + "/" +"tempo.jpg", 'rb')
+  _data = _file.read()
+  metadata.tags["covr"] = [(MP4Cover(_data))]
+  metadata.save()
 
+
+
+
+def rewrite_constants(new: list) -> None:
+  with open(f"/home/{os.getlogin()}/Latom/latom/constants.py", "w") as f:
+    f.writelines(new)
