@@ -1,9 +1,11 @@
-import spotipy
-from spotipy.oauth2 import SpotifyClientCredentials
-from auth import CLIENT_ID, CLIENT_SECRET
+import json
 from pprint import pprint
-import json, yaml
 
+import spotipy
+import yaml
+from spotipy.oauth2 import SpotifyClientCredentials
+
+from auth import CLIENT_ID, CLIENT_SECRET
 
 url_single = "https://open.spotify.com/track/1cEUi8QulMj1xgrPwwGC2p?si=4dd560aa593c447d"
 url_artist = "https://open.spotify.com/artist/7dGJo4pcD2V6oG8kP0tJRR"
@@ -23,6 +25,8 @@ results = sp.track(url_single, market="US")
 # print(yaml.dump(results, sort_keys=False, default_flow_style=False))
 print(json.dumps(results, sort_keys=False, indent=4))
 
+# def get_playlist_tracks(playlist_id):
+  
 
 
 def fetch_albums_by_atrist(artist_urn):

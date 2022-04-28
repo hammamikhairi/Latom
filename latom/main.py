@@ -1,13 +1,15 @@
 import os
 import time
+from os import system
+
 from yaml import dump
+
+from banner import refresh
 from constants import PATH
 from services import tracks_list_config
-from banner import refresh
-
 from youtube import (download_playlist_audios, download_single,
-                     get_channel_videos, get_playlist_videos)
-from os import system
+                     get_channel_videos, get_playlist_videos,
+                     handle_search_download)
 
 playlist_testing_url1= "https://www.youtube.com/playlist?list=PLGkfMLpx7lj_C6pjva7Y1VaREh4qYJ8Vq"
 playlist_testing_url2= "https://www.youtube.com/playlist?list=PL-osiE80TeTsqhIuOqKhwlXsIBIdSeYtc"
@@ -18,11 +20,12 @@ channel_testing_url= "https://www.youtube.com/channel/UCbRrwIaXV_lJLzTPtcafh2w/a
 def main() -> None:
   refresh("enter link : ", endl="")
   url = input()
-  # url = playlist_testing_url
 
 
   if "spotify" in url:
-    pass
+    if "playlist" in url:
+      refresh()
+      
   if "youtube" in url:
     if "playlist" in url:
       refresh()
@@ -47,12 +50,14 @@ def main() -> None:
     else:
       print("single ??")
       download_single(url)
+  elif "https://" in url:
+    refresh("Not supported yet :/", endl="\n")
+  else:
+    handle_search_download(url)
 
 
 if __name__=="__main__":
   main()
-
-
 
 
 
