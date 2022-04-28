@@ -12,7 +12,7 @@ from youtubesearchpython import (Channel, ChannelsSearch, Playlist, Video,
 
 from banner import refresh, rerror
 from constants import PATH
-from services import checker, get_current_songs
+from services import checker, get_current_songs, write_metadata
 from soang import Soang
 
 youtube_video_url = 'https://www.youtube.com/watch?v=UA7NSpzG98s'
@@ -21,25 +21,24 @@ youtube_video_url = 'https://www.youtube.com/watch?v=UA7NSpzG98s'
 
 def download_youtube_audio(url: str, filename: str) -> None:
   """
-    Downloads the audio (format : webm) from youtube video in PATH directory
+    Downloads the audio (format : m4a) from youtube video in PATH directory
 
     Args:
         url (str): youtube url
         filename (str): filename should be with extension
   """
-  # yt = YouTube(url)
-  # streams = yt.streams.filter(only_audio=True)
-  # av = [s for s in streams if "webm" in str(s)]
-  # av[-1].download(f"{PATH}", filename)
   yt = pafy.new(url)
   audiostreams = yt.audiostreams
   streams = [i for i in audiostreams if i.extension == "m4a"]
   #ANCHOR - dont forget this dirty hack
   #!SECTION - ADD A CALLBACK FOR DOWNLOADING
-  os.chdir("../Music")
-  streams[-1].download(filename + ".m4a",quiet=True)
+  os.chdir(os.path.relpath(PATH))
+  print(streams[-1].get_filesize())
+  name = filename + ".m4a"
+  streams[-1].download(name,quiet=True)
+  
 
-download_youtube_audio("https://www.youtube.com/watch?v=UA7NSpzG98s", "test")
+
 
 def get_youtube_video_name(url: str) -> str :
   video_data = Video.get(url)
@@ -79,10 +78,10 @@ def get_channel_id_name(url: str) -> str:
 def fetcher(playlist: Playlist) -> list:
   while playlist.hasMoreVideos:
     playlist.getNextVideos()
-    
+ 
   videos = []
   for video in playlist.videos:
-    videos.append(Soang(video["title"], video["duration"], video["link"]))
+    videos.append(Soang(video["title"], video["duration"], video["link"], video["thumbnails"][0]["url"]))
   checked = checker(get_current_songs(), videos)
   return checked
 
@@ -102,7 +101,7 @@ def get_playlist_videos(url: str) -> list:
       playlist = Playlist(url)
     except Exception as e:
       if "Name" in str(e):
-        rerror("Check your internet bro")
+        rerror("Check your internet connection!")
       else:
         rerror("Check your playlist link")
       system(exit(69))
@@ -112,7 +111,6 @@ def get_playlist_videos(url: str) -> list:
 
     checked.append(name)
     return checked
-
 
 
 def get_channel_videos(url: str) -> list:
@@ -133,11 +131,11 @@ def download_single(url:str) -> None:
   """
   console = Console()
   refresh()
-  with console.status("[bold cyan]Fetching", speed=3, spinner="simpleDotsScrolling", spinner_style="cyan") as status:
+  with console.status("[bold cyan]Fetching...", speed=3, spinner="simpleDotsScrolling", spinner_style="cyan") as status:
     name = get_youtube_video_name(url)
   refresh()
   with console.status(f"[bold cyan]Downloading : {name}", speed=3, spinner="simpleDotsScrolling", spinner_style="cyan") as status:
-    download_youtube_audio(url, name+".webm")
+    download_youtube_audio(url, name)
   #TODO: add progress bar and make the fucking interface prettier
   print(name)
 
@@ -146,23 +144,37 @@ def download_playlist_audios(videos: list) -> None:
   Da loop
 
   Args:
-      videos : list of dict
+      videos : list of Soang objects
   """
   console = Console()
   for video in videos:
-    with console.status(f"[bold cyan]Downloading : {video.title}", speed=3, spinner="simpleDotsScrolling", spinner_style="cyan") as status:
-      download_youtube_audio(video.link, f'{video.title}.webm')
-      print(video.title)
+    with console.status(f"[bold cyan]Downloading... : {video.title}", speed=3, spinner="simpleDotsScrolling", spinner_style="cyan") as status:
+      download_youtube_audio(video.link, video.title)
+      
+      # write_metadata(video.title + "m4a", video.cover)
+      print(video)
 
 
 ##! search
 
-# results = VideosSearch('Rap God - lyrics', limit = 5).result()["result"]
-# res = []
-# for result in results:
-#   res.append(Soang(result["title"], result["duration"], result["link"]))
-#   pass
+def handle_search_download(query: str) -> Soang:
+  console = Console()
+  with console.status(f"[bold cyan]Fetching : {query}", speed=3, spinner="simpleDotsScrolling", spinner_style="cyan"):
+    results = VideosSearch(query + 'lyrics', limit = 3).result()["result"]
+    res = []
+    for result in results:
+      res.append(Soang(result["title"], result["duration"], result["link"]))
 
+    if len(res):
+      shortest = [res[0]]
+    else:
+      rerror("No results found")
+      system(exit(69))
+    shortest = [i for i in res if i.duration <= shortest[0].duration]
+    video = shortest[-1]
+    
+  
+  with console.status(f"[bold cyan]Downloading : {video.title}", speed=3, spinner="simpleDotsScrolling", spinner_style="cyan"):
+      download_youtube_audio(video.link, video.title)
+      print(video.title)
 
-
-# print(json.dumps(results, sort_keys=False, indent=4))
