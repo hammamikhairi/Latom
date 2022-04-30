@@ -1,7 +1,8 @@
 import sys
 from os import system
 from time import sleep
-import multiprocessing
+
+# import multiprocessing
 from sty import fg
 
 banner = fg.li_cyan + """
@@ -39,6 +40,4 @@ class Loader:
         sys.stdout.flush()
         sys.stdout.write('\b')
         sleep(0.05)
-  __loader__ = multiprocessing.Process(target=loading, args=(1,), daemon=True)
-
-
+  # __loader__ = multiprocessing.Process(target=loading, args=(1,), daemon=True)

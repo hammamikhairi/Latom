@@ -9,7 +9,7 @@ from simple_term_menu import TerminalMenu
 from sty import fg
 
 from banner import refresh
-from constants import ILLEGAL_CHARS, PATH
+from constants import  PATH
 from soang import Soang
 
 
