@@ -2,7 +2,6 @@ import sys
 from os import system
 from time import sleep
 
-# import multiprocessing
 from sty import fg
 
 banner = fg.li_cyan + """

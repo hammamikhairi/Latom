@@ -1,22 +1,17 @@
-import json
+
 import os
 from os import system
-from pprint import pprint  # logs
 from time import sleep
 
 import pafy
-import yaml  # logs
 from rich.console import Console
 from youtubesearchpython import (Channel, ChannelsSearch, Playlist, Video,
                                  VideosSearch, playlist_from_channel_id)
 
 from banner import refresh, rerror
 from constants import PATH
-from services import checker, get_current_songs, write_metadata
+from services import checker, get_current_songs, tracks_list_config
 from soang import Soang
-
-youtube_video_url = 'https://www.youtube.com/watch?v=UA7NSpzG98s'
-# pprint.pprint()
 
 
 def download_youtube_audio(url: str, filename: str) -> None:
@@ -36,9 +31,6 @@ def download_youtube_audio(url: str, filename: str) -> None:
   # print(streams[-1].get_filesize())
   name = filename + ".m4a"
   streams[-1].download(name,quiet=True)
-  
-
-
 
 def get_youtube_video_name(url: str) -> str :
   video_data = Video.get(url)
@@ -150,7 +142,7 @@ def download_playlist_audios(videos: list) -> None:
   for video in videos:
     with console.status(f"[bold cyan]Downloading... : {video.title}", speed=3, spinner="simpleDotsScrolling", spinner_style="cyan") as status:
       download_youtube_audio(video.link, video.title)
-      
+
       # write_metadata(video.title + "m4a", video.cover)
       print(video)
 
@@ -174,9 +166,27 @@ def handle_search_download(query: str) -> Soang:
       system(exit(69))
     shortest = [i for i in res if i.duration <= shortest[0].duration]
     video = shortest[-1]
-    
-  
+
+
   with console.status(f"[bold cyan]Downloading : {video.title}", speed=3, spinner="simpleDotsScrolling", spinner_style="cyan"):
       download_youtube_audio(video.link, video.title)
       print(video)
 
+def handle_yt_playist_download(url:str) -> None:
+  already_have, new, all, PLAY_LIST_NAME = get_playlist_videos(url)
+  refresh(f'Playlist : "{PLAY_LIST_NAME}"', endl="\n")
+  print(f"{len(all)} tracks fetched.")
+  selected = tracks_list_config(already_have, new, all)
+  refresh()
+  print(selected)
+  download_playlist_audios(selected)
+
+
+def handle_yt_channel_download(url:str) -> None:
+  already_have, new, all, channel_name = get_channel_videos(url)
+  refresh(f'Channel : "{channel_name}"', endl="\n")
+  print(f"{len(all)} tracks fetched.")
+  selected = tracks_list_config(already_have, new, all)
+  refresh()
+  print(selected)
+  download_playlist_audios(selected)

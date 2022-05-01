@@ -1,7 +1,6 @@
 import os
 import urllib.request
 from os import path, system
-from time import sleep
 
 import mutagen
 from mutagen.mp4 import MP4, MP4Cover, MP4Tags

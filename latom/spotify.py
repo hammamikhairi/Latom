@@ -1,10 +1,6 @@
-import json
-from pprint import pprint
-from time import sleep
-from rich.console import Console
 
 import spotipy
-import yaml
+from rich.console import Console
 from spotipy.exceptions import SpotifyException
 from spotipy.oauth2 import SpotifyClientCredentials
 
