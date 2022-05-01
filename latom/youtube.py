@@ -33,7 +33,7 @@ def download_youtube_audio(url: str, filename: str) -> None:
   #ANCHOR - dont forget this dirty hack
   #!SECTION - ADD A CALLBACK FOR DOWNLOADING
   os.chdir(os.path.relpath(PATH))
-  print(streams[-1].get_filesize())
+  # print(streams[-1].get_filesize())
   name = filename + ".m4a"
   streams[-1].download(name,quiet=True)
   
@@ -163,7 +163,9 @@ def handle_search_download(query: str) -> Soang:
     results = VideosSearch(query + 'lyrics', limit = 3).result()["result"]
     res = []
     for result in results:
-      res.append(Soang(result["title"], result["duration"], result["link"]))
+      song = Soang(result["title"], result["duration"])
+      song.link = result["link"]
+      res.append(song)
 
     if len(res):
       shortest = [res[0]]
@@ -176,5 +178,5 @@ def handle_search_download(query: str) -> Soang:
   
   with console.status(f"[bold cyan]Downloading : {video.title}", speed=3, spinner="simpleDotsScrolling", spinner_style="cyan"):
       download_youtube_audio(video.link, video.title)
-      print(video.title)
+      print(video)
 

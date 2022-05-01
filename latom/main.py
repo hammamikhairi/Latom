@@ -7,6 +7,8 @@ from yaml import dump
 from banner import refresh
 from constants import PATH
 from services import tracks_list_config
+from spotify import (handle_album_download, handle_artist_download,
+                     handle_plalist_download, handle_track_download)
 from youtube import (download_playlist_audios, download_single,
                      get_channel_videos, get_playlist_videos,
                      handle_search_download)
@@ -25,8 +27,17 @@ def main() -> None:
   if "spotify" in url:
     if "playlist" in url:
       refresh()
-      
-  if "youtube" in url:
+      handle_plalist_download(url)
+    elif "track" in url:
+      refresh()
+      handle_track_download(url)
+    elif "artist" in url:
+      refresh()
+      handle_artist_download(url)
+    elif "album" in url:
+      refresh()
+      handle_album_download(url)
+  elif "youtube" in url:
     if "playlist" in url:
       refresh()
       already_have, new, all, PLAY_LIST_NAME = get_playlist_videos(url)

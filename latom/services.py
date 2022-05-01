@@ -9,7 +9,7 @@ from simple_term_menu import TerminalMenu
 from sty import fg
 
 from banner import refresh
-from constants import  PATH
+from constants import PATH
 from soang import Soang
 
 
@@ -162,8 +162,7 @@ def set_cover(name: str, link:str) -> None:
   metadata.save()
 
 
-
-
 def rewrite_constants(new: list) -> None:
   with open(f"/home/{os.getlogin()}/Latom/latom/constants.py", "w") as f:
     f.writelines(new)
+
