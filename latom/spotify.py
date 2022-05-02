@@ -31,7 +31,6 @@ def test_auth() -> bool:
   try:
     sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=CLIENT_ID, client_secret=CLIENT_SECRET))
     res = sp.search(q='artist:' + " Joji", type='artist')
-    print(res)
   except:
     connect()
 
