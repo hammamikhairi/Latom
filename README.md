@@ -4,30 +4,43 @@ Latom, is a song downloader that accepts Youtube and (soon) spotify links. The a
 
 This seemed like the perfect pet project to make and consequently learn from :)
 
+<br />
+
 # Features
+
 - checks existing songs in the target directory
 - can select which songs to download from a playlist/channel.
-- can perform youtube search if no url specified
-- fucks in the head
+- can remove unwanted songs from a playlist
+- can perform youtube search if no url is specified
 
+<br />
 
 # Packages
 
-- Pafy
-- youtubesearchpython
-- multiprocessing
-- simple_term_menu
-- rich
-- sty
+- [Pafy](https://pypi.org/project/pafy/)
+- [Spotipy](https://spotipy.readthedocs.io/en/2.19.0/)
+- [youtubesearchpython](https://pypi.org/project/youtube-search-python/)
+- [dataclasses](https://docs.python.org/3/library/dataclasses.html)
+- [simple_term_menu](https://pypi.org/project/simple-term-menu/)
+- [rich](https://rich.readthedocs.io/en/stable/introduction.html)
+- [sty](https://pypi.org/project/sty/)
 
 # Support
 The following audio format is supported:
 - m4a
 
-All Youtube link types are currently supported (channels, shorts...)
+<br />
 
+All Youtube link types are supported (channels, shorts...)
+All Spotify link types are supported aswell (Artists, Albums)
+
+<br />
 
 # Setup
 No setup yet.
+<br />
+<br />
 
-Note: simple-term-menu can break sometimes :P .
+## Note: 
+
+- simple-term-menu can break sometimes :P .

@@ -1,15 +1,16 @@
 import os
-import urllib.request
+# import urllib.request
 from os import path, system
 
-import mutagen
-from mutagen.mp4 import MP4, MP4Cover, MP4Tags
+# import mutagen
+# from mutagen.mp4 import MP4, MP4Cover, MP4Tags
 from simple_term_menu import TerminalMenu
 from sty import fg
 
 from banner import refresh
 from constants import PATH
-from soang import Soang
+
+# from soang import Soang
 
 
 # TODO - use Pyinquirer instead of simple_term_menu
@@ -142,23 +143,23 @@ def tracks_list_config(acquired, new, all) -> list:
       selected = all
   return selected
 
-def write_metadata(name: str, song:Soang) -> None:
-  with open(PATH + "/" +name, 'r+b') as file:
-    if song.Spotify:
-      pass
-    else:
-      media_file = mutagen.File(file, easy=True)
-      media_file['comment'] = song.comment
-      media_file.save()
-  set_cover(name, song.cover)
+# def write_metadata(name: str, song:Soang) -> None:
+#   with open(PATH + "/" +name, 'r+b') as file:
+#     if song.Spotify:
+#       pass
+#     else:
+#       media_file = mutagen.File(file, easy=True)
+#       media_file['comment'] = song.comment
+#       media_file.save()
+#   set_cover(name, song.cover)
 
-def set_cover(name: str, link:str) -> None:
-  urllib.request.urlretrieve(link, "tempo.jpg")
-  metadata = MP4(PATH + "/" +name) 
-  _file = open(PATH + "/" +"tempo.jpg", 'rb')
-  _data = _file.read()
-  metadata.tags["covr"] = [(MP4Cover(_data))]
-  metadata.save()
+# def set_cover(name: str, link:str) -> None:
+#   urllib.request.urlretrieve(link, "tempo.jpg")
+#   metadata = MP4(PATH + "/" +name) 
+#   _file = open(PATH + "/" +"tempo.jpg", 'rb')
+#   _data = _file.read()
+#   metadata.tags["covr"] = [(MP4Cover(_data))]
+#   metadata.save()
 
 
 
