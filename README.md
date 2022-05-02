@@ -4,7 +4,7 @@ Latom, is a song downloader that accepts Youtube and (soon) spotify links. The a
 
 This seemed like the perfect pet project to make and consequently learn from :)
 
-<br />
+
 
 # Features
 
@@ -13,7 +13,7 @@ This seemed like the perfect pet project to make and consequently learn from :)
 - can remove unwanted songs from a playlist
 - can perform youtube search if no url is specified
 
-<br />
+
 
 # Packages
 
@@ -29,18 +29,18 @@ This seemed like the perfect pet project to make and consequently learn from :)
 The following audio format is supported:
 - m4a
 
-<br />
+
 
 All Youtube link types are supported (channels, shorts...)
 All Spotify link types are supported aswell (Artists, Albums)
 
-<br />
+
 
 # Setup
 No setup yet.
-<br />
-<br />
 
-## Note: 
+
+
+## Note:
 
 - simple-term-menu can break sometimes :P .
