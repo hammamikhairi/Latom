@@ -1,7 +1,7 @@
 
 from banner import refresh
-from spotify import (handle_album_download, handle_artist_download,
-                     handle_plalist_download, handle_track_download)
+from spotify import (connect, handle_album_download, handle_artist_download,
+                     handle_plalist_download, handle_track_download, test_auth)
 from youtube import (download_single, handle_search_download,
                      handle_yt_channel_download, handle_yt_playist_download)
 
@@ -16,6 +16,7 @@ def main() -> None:
   refresh()
 
   if "spotify" in url:
+    test_auth()
     if "playlist" in url:
       handle_plalist_download(url)
     elif "track" in url:

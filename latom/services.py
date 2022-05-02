@@ -165,3 +165,9 @@ def rewrite_constants(new: list) -> None:
   with open(f"/home/{os.getlogin()}/Latom/latom/constants.py", "w") as f:
     f.writelines(new)
 
+def set_spotify_auth() -> None:
+  CLIENT_ID = input("\nEnter your Spotify Client ID: ")
+  CLIENT_SECRET = input("\nEnter your Spotify Client Secret: ")
+  with open("auth.py", "w+") as auth:
+    auth.writelines([f"CLIENT_ID = '{CLIENT_ID}'\n", f"CLIENT_SECRET = '{CLIENT_SECRET}'\n"])
+  return CLIENT_ID, CLIENT_SECRET

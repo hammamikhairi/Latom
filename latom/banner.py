@@ -19,6 +19,15 @@ error = fg.da_red + """
  \___| |_|    |_|     \___/  |_|
 
 """ + fg.rs
+success = fg.li_green + """
+ ____                                             _
+/ ___|   _   _    ___    ___    ___   ___   ___  | |
+\___ \  | | | |  / __|  / __|  / _ \ / __| / __| | |
+ ___) | | |_| | | (__  | (__  |  __/ \__ \ \__ \ |_|
+|____/   \__,_|  \___|  \___|  \___| |___/ |___/ (_)
+
+"""
+
 
 def refresh(message:str = None, endl:str = "\n") -> None:
   system("clear")
@@ -28,6 +37,11 @@ def refresh(message:str = None, endl:str = "\n") -> None:
 def rerror(message:str = None) -> None:
   system("clear")
   print(error)
+  print(message) if message else None
+
+def resuccess(message:str = None) -> None:
+  system("clear")
+  print(success)
   print(message) if message else None
 
 class Loader:

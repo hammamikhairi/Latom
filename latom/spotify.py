@@ -5,8 +5,9 @@ from spotipy.exceptions import SpotifyException
 from spotipy.oauth2 import SpotifyClientCredentials
 
 from auth import CLIENT_ID, CLIENT_SECRET
-from banner import refresh, rerror
-from services import checker, get_current_songs, tracks_list_config
+from banner import refresh, rerror, resuccess
+from services import (checker, get_current_songs, set_spotify_auth,
+                      tracks_list_config)
 from soang import Soang
 from youtube import handle_search_download
 
@@ -15,12 +16,31 @@ url_artist = "https://open.spotify.com/artist/3MZsBdqDrRTJihTHQrO6Dq"
 url_album = "https://open.spotify.com/album/3MKvhQoFSrR2PrxXXBHe9B"
 url_playlis = "https://open.spotify.com/playlist/0ctbo3FtW49qComqmzKMuK"
 
-try:
-  sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=CLIENT_ID, client_secret=CLIENT_SECRET))
-except:
-  print("Can't connect to Spotify")
 
-# results = sp.track(url_single, market="US")
+def connect():
+  rerror("Must provide Client ID and Client Secret \n You can get them from https://developer.spotify.com/dashboard/ .")
+  id, secret = set_spotify_auth()
+  try:
+    sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=id, client_secret=secret))
+    sp.search(q='artist:' + " Joji", type='artist')
+    resuccess("Successfully connected to Spotify!")
+  except:
+    rerror("Invalid Client ID or Client Secret")
+
+def test_auth() -> bool:
+  try:
+    sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=CLIENT_ID, client_secret=CLIENT_SECRET))
+    res = sp.search(q='artist:' + " Joji", type='artist')
+    print(res)
+  except:
+    connect()
+
+if CLIENT_ID != "LAT" and CLIENT_SECRET != "LAT":
+  try:
+    sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=CLIENT_ID, client_secret=CLIENT_SECRET))
+  except SpotifyException:
+    print("Can't connect to Spotify")
+
 
 def fetch_playlist_data(url: str) -> dict:
   """
