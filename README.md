@@ -31,7 +31,7 @@ The following audio format is supported:
 
 
 
-All Youtube link types are supported (channels, shorts...)
+All Youtube link types are supported (channels, shorts...) <br />
 All Spotify link types are supported aswell (Artists, Albums)
 
 
