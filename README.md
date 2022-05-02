@@ -7,12 +7,13 @@ This seemed like the perfect pet project to make and consequently learn from :)
 # Features
 - checks existing songs in the target directory
 - can select which songs to download from a playlist/channel.
+- can perform youtube search if no url specified
 - fucks in the head
 
 
 # Packages
 
-- pytube
+- Pafy
 - youtubesearchpython
 - multiprocessing
 - simple_term_menu
@@ -21,12 +22,10 @@ This seemed like the perfect pet project to make and consequently learn from :)
 
 # Support
 The following audio format is supported:
-- webm
+- m4a
 
-Again, the following link types are supported:
-- song links
-- playlist links
-- channel links
+All Youtube link types are currently supported (channels, shorts...)
+
 
 # Setup
 No setup yet.
