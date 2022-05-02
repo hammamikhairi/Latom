@@ -161,9 +161,6 @@ def set_cover(name: str, link:str) -> None:
   metadata.save()
 
 
-def rewrite_constants(new: list) -> None:
-  with open(f"/home/{os.getlogin()}/Latom/latom/constants.py", "w") as f:
-    f.writelines(new)
 
 def set_spotify_auth() -> None:
   CLIENT_ID = input("\nEnter your Spotify Client ID: ")
@@ -171,3 +168,9 @@ def set_spotify_auth() -> None:
   with open("auth.py", "w+") as auth:
     auth.writelines([f"CLIENT_ID = '{CLIENT_ID}'\n", f"CLIENT_SECRET = '{CLIENT_SECRET}'\n"])
   return CLIENT_ID, CLIENT_SECRET
+
+def rewrite_constants(new: list) -> None:
+  curr = os.getcwd()
+  rel = os.path.relpath("/home/khairi/Music")
+  # with open(f"{curr}/constants.py", "w") as f:
+  #   f.writelines(new)
