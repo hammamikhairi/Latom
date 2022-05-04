@@ -1,0 +1,6 @@
+pafy==0.5.5
+spotipy==2.19.0
+simple-term-menu==1.4.1
+youtube-search-python==1.6.3
+rich==11.2.0
+sty==1.0.4

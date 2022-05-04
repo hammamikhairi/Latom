@@ -12,7 +12,7 @@ This seemed like the perfect pet project to make and consequently learn from :)
 - can select which songs to download from a playlist/channel.
 - can remove unwanted songs from a playlist
 - can perform youtube search if no url is specified
-
+- all the songs will be downloaded to /home/user/Music
 
 
 # Packages
@@ -37,7 +37,9 @@ All Spotify link types are supported aswell (Artists, Albums)
 
 
 # Setup
-No setup yet.
+```bash
+pip install -r ./requirements.txt
+```
 
 
 
