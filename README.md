@@ -37,7 +37,7 @@ All Spotify link types are supported aswell (Artists, Albums)
 
 
 # Setup
-### to install pip requirements
+### to install the requirements
 ```bash
 pip install -r ./latom/requirements.txt
 ```
