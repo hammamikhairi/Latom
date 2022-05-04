@@ -16,6 +16,7 @@ url_artist = "https://open.spotify.com/artist/3MZsBdqDrRTJihTHQrO6Dq"
 url_album = "https://open.spotify.com/album/3MKvhQoFSrR2PrxXXBHe9B"
 url_playlis = "https://open.spotify.com/playlist/0ctbo3FtW49qComqmzKMuK"
 
+sp = None
 
 def connect():
   rerror("Must provide Client ID and Client Secret \n You can get them from https://developer.spotify.com/dashboard/ .")

@@ -26,7 +26,7 @@ success = fg.li_green + """
  ___) | | |_| | | (__  | (__  |  __/ \__ \ \__ \ |_|
 |____/   \__,_|  \___|  \___|  \___| |___/ |___/ (_)
 
-"""
+"""+ fg.rs
 
 
 def refresh(message:str = None, endl:str = "\n") -> None:
