@@ -56,9 +56,7 @@ The dislike button on youtube has been made private, so some modification on bac
 1) Navigate to :
  - C:\Users\harsh\AppData\Local\Programs\Python\Python3.8\lib\site- packages\pafy
  - /home/user/.local/lib/python3.8/site-packages/pafy
-<br>
-<br>
-3) Open backend_youtube_dl.py file
-<br>
-<br>
-4) Comment or remove this code: self._dislikes = self._ydl_info['dislike_count']
+
+2) Open backend_youtube_dl.py file
+
+3) Comment or remove this code: self._dislikes = self._ydl_info['dislike_count']
