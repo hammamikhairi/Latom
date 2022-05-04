@@ -1,4 +1,6 @@
 
+import time
+
 import spotipy
 from rich.console import Console
 from spotipy.exceptions import SpotifyException
@@ -25,6 +27,7 @@ def connect():
     sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=id, client_secret=secret))
     sp.search(q='artist:' + " Joji", type='artist')
     resuccess("Successfully connected to Spotify!")
+    time.sleep(2)
   except:
     rerror("Invalid Client ID or Client Secret")
 
