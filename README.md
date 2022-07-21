@@ -59,4 +59,4 @@ The dislike button on youtube has been made private, so some modification on bac
 
 2) Open backend_youtube_dl.py file
 
-3) Comment or remove this code: self._dislikes = self._ydl_info['dislike_count']
+3) Comment or remove this code (line 54): self._dislikes = self._ydl_info['dislike_count']
