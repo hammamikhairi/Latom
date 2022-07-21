@@ -2,3 +2,5 @@
 .songs
 tests
 uml1.uxf
+.pytest_cache
+__pycache__
