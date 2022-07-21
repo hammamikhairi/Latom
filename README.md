@@ -1,6 +1,6 @@
 # Introduction
 
-Latom, is a song downloader that accepts Youtube and spotify links. The app currently supports downloading :
+Latom, is an asynchronous song downloader that accepts Youtube and spotify links. The app currently supports downloading :
 - Singles 
 - Playlists
 - Albums
