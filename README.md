@@ -1,6 +1,11 @@
 # Introduction
 
-Latom, is a song downloader that accepts Youtube and (soon) spotify links. The app currently supports downloading songs, playlists and entire youtube Channels.
+Latom, is a song downloader that accepts Youtube and spotify links. The app currently supports downloading :
+- Singles 
+- Playlists
+- Albums
+- Youtube Channels (entirely)
+- Artist's entire Portfolio.
 
 This seemed like the perfect pet project to make and consequently learn from :)
 
@@ -8,11 +13,11 @@ This seemed like the perfect pet project to make and consequently learn from :)
 
 # Features
 
-- checks existing songs in the target directory
+- Installs Tracks Asynchronously ( can choose how many at a time in `latom/.index.txt` )
+- checks for existing songs in the `~/Music` directory 
 - can select which songs to download from a playlist/channel.
 - can remove unwanted songs from a playlist
-- can perform youtube search if no url is specified
-- all the songs will be downloaded to /home/user/Music
+- can perform youtube search ( simply enter the query instead of the url )
 
 
 # Packages
@@ -29,10 +34,8 @@ This seemed like the perfect pet project to make and consequently learn from :)
 The following audio format is supported:
 - m4a
 
-
-
 All Youtube link types are supported (channels, shorts...) <br />
-All Spotify link types are supported aswell (Artists, Albums)
+All Spotify link types are supported aswell (Artists, Albums, plalists ...)
 
 
 
