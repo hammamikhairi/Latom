@@ -1,5 +1,6 @@
 
 import os
+from multiprocessing import Process
 from os import system
 from time import sleep
 
@@ -10,7 +11,8 @@ from youtubesearchpython import (Channel, ChannelsSearch, Playlist, Video,
 
 from banner import refresh, rerror
 from constants import PATH
-from services import checker, get_current_songs, tracks_list_config
+from services import (checker, decrement_index, get_current_songs,
+                      increment_index, read_file, tracks_list_config)
 from soang import Soang
 
 
@@ -141,36 +143,65 @@ def download_playlist_audios(videos: list) -> None:
   console = Console()
   for video in videos:
     with console.status(f"[bold cyan]Downloading... : {video.title}", speed=3, spinner="simpleDotsScrolling", spinner_style="cyan") as status:
-      download_youtube_audio(video.link, video.title)
-
+      try :
+        download_youtube_audio(video.link, video.title)
+      except Exception as e:
+        download_youtube_audio(video.link, video.title)
+      finally:
+        print("error occured with : " + video.title)
       # write_metadata(video.title + "m4a", video.cover)
       print(video)
 
 
-##! search
+def Asynchronous_Download(selected: list) -> None:
 
+  def download(data: tuple):
+    try:
+      try:
+        download_youtube_audio(data[0], data[1])
+      except:
+        download_youtube_audio(data[0], data[1])
+    except :
+      print(f"Error downloading {data[1]}!!!")
+    increment_index()
+
+  while len(selected):
+    try :
+      index = int(float(read_file()))
+    except:
+      index = 0
+
+    if index == 0:
+      continue
+    else:
+      decrement_index()
+      video = selected.pop()
+      print(video.title)
+      process = Process(target=download, args=((video.link, video.title),))
+      process.start()
+
+##! search
 def handle_search_download(query: str) -> Soang:
   console = Console()
-  with console.status(f"[bold cyan]Fetching : {query}", speed=3, spinner="simpleDotsScrolling", spinner_style="cyan"):
-    results = VideosSearch(query + 'lyrics', limit = 3).result()["result"]
-    res = []
-    for result in results:
-      song = Soang(result["title"], result["duration"])
-      song.link = result["link"]
-      res.append(song)
+  # with console.status(f"[bold cyan]Fetching : {query}", speed=3, spinner="simpleDotsScrolling", spinner_style="cyan"):
+  results = VideosSearch(query + 'lyrics', limit = 3).result()["result"]
+  res = []
+  for result in results:
+    song = Soang(result["title"], result["duration"])
+    song.link = result["link"]
+    res.append(song)
 
-    if len(res):
-      shortest = [res[0]]
-    else:
-      rerror("No results found")
-      system(exit(69))
-    shortest = [i for i in res if i.duration <= shortest[0].duration]
-    video = shortest[-1]
+  if len(res):
+    shortest = [res[0]]
+  else:
+    rerror("No results found")
+    system(exit(69))
+  shortest = [i for i in res if i.duration <= shortest[0].duration]
+  video = shortest[-1]
 
 
-  with console.status(f"[bold cyan]Downloading : {video.title}", speed=3, spinner="simpleDotsScrolling", spinner_style="cyan"):
-      download_youtube_audio(video.link, video.title)
-      print(video)
+  # with console.status(f"[bold cyan]Downloading : {video.title}", speed=3, spinner="simpleDotsScrolling", spinner_style="cyan"):
+  download_youtube_audio(video.link, video.title)
 
 def handle_yt_playist_download(url:str) -> None:
   already_have, new, all, PLAY_LIST_NAME = get_playlist_videos(url)
@@ -178,8 +209,8 @@ def handle_yt_playist_download(url:str) -> None:
   print(f"{len(all)} tracks fetched.")
   selected = tracks_list_config(already_have, new, all)
   refresh()
-  print(selected)
-  download_playlist_audios(selected)
+  # download_playlist_audios(selected)
+  Asynchronous_Download(selected)
 
 
 def handle_yt_channel_download(url:str) -> None:
@@ -188,5 +219,5 @@ def handle_yt_channel_download(url:str) -> None:
   print(f"{len(all)} tracks fetched.")
   selected = tracks_list_config(already_have, new, all)
   refresh()
-  print(selected)
-  download_playlist_audios(selected)
+  # download_playlist_audios(selected)
+  Asynchronous_Download(selected)

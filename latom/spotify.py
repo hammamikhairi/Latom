@@ -1,5 +1,6 @@
 
 import time
+from multiprocessing import Process
 
 import spotipy
 from rich.console import Console
@@ -8,7 +9,8 @@ from spotipy.oauth2 import SpotifyClientCredentials
 
 from auth import CLIENT_ID, CLIENT_SECRET
 from banner import refresh, rerror, resuccess
-from services import (checker, get_current_songs, set_spotify_auth,
+from services import (checker, decrement_index, get_current_songs,
+                      increment_index, read_file, set_spotify_auth,
                       tracks_list_config)
 from soang import Soang
 from youtube import handle_search_download
@@ -74,15 +76,43 @@ def get_playlist_tracks(tracks: list) -> list:
     print(song)
   return songs
 
+
+def Asynchronous_Download(selected: list) -> None:
+
+  def download(data: str):
+    try:
+      try:
+        handle_search_download(data)
+      except :
+        handle_search_download(data)
+    except :
+      print(f"Error downloading {data}!!!")
+    increment_index()
+
+  while len(selected):
+    try :
+      index = int(float(read_file()))
+    except:
+      index = 0
+    if index == 0:
+      continue
+    else:
+      decrement_index()
+      song = selected.pop()
+      print(song)
+      process = Process(target=download, args=(song.title + " - " + song.artist,))
+      process.start()
+
+
 def handle_plalist_download(url: str):
   data = fetch_playlist_data(url)
   songs = get_playlist_tracks(data["items"])
   acquired, new, videos_to_download  = checker(get_current_songs(), songs)
   refresh(f'Playlist : "{data["title"]}"', endl="\n")
   selected = tracks_list_config(acquired, new, videos_to_download)
-  refresh()  
-  for song in selected:
-    handle_search_download(song.title + " - " + song.artist)
+  refresh()
+  
+  Asynchronous_Download(selected)
 
 def fetch_track_data(url: str) -> Soang:
   try:
@@ -126,8 +156,8 @@ def handle_album_download(url: str):
   refresh(f'Album : "{data["name"]}"', endl="\n")
   selected = tracks_list_config(acquired, new, videos_to_download)
   refresh()
-  for song in selected:
-    handle_search_download(song.title + " - " + song.artist)
+
+  Asynchronous_Download(selected)
 
 
 
@@ -137,7 +167,7 @@ def fetch_albums_by_atrist(url):
   while results['next']:
     results = sp.next(results)
     albums.extend(results['items'])
-  
+
   res = []
   for album in albums:
     res.append(album["external_urls"]["spotify"])
@@ -149,7 +179,7 @@ def get_all_artist_songs(albums: list) -> list:
     data = fetch_album_data(album)
     songs = get_album_tracks(data["tracks"]["items"])
     tracks.extend(songs)
-    
+
   return tracks
 
 def handle_artist_download(url: str):
@@ -164,8 +194,8 @@ def handle_artist_download(url: str):
   refresh(f'Artist : "{name}"', endl="\n")
   selected = tracks_list_config(acquired, new, videos_to_download)
   refresh()
-  for song in selected:
-    handle_search_download(song.title + " - " + song.artist)
+
+  Asynchronous_Download(selected)
 
 
 # results = sp.artist_albums(,album_type="album", country=None, limit=2, offset=0)
@@ -175,5 +205,4 @@ def handle_artist_download(url: str):
 # print(json.dumps(results, sort_keys=False, indent=4))
 
 # def get_playlist_tracks(playlist_id):
-  
 

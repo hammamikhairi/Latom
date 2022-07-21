@@ -1,4 +1,5 @@
 import os
+from multiprocessing import Lock
 # import urllib.request
 from os import path, system
 
@@ -8,7 +9,7 @@ from simple_term_menu import TerminalMenu
 from sty import fg
 
 from banner import refresh
-from constants import PATH
+from constants import PATH, ROOT
 
 # from soang import Soang
 
@@ -175,3 +176,20 @@ def rewrite_constants(new: list) -> None:
   rel = os.path.relpath("/home/khairi/Music")
   # with open(f"{curr}/constants.py", "w") as f:
   #   f.writelines(new)
+
+mutex = Lock()
+
+def read_file():
+  with open(ROOT + "/.index.txt", "r") as f:
+    return f.read()
+def increment_index():
+  previous_index = int(float(read_file()))
+  with mutex:
+    with open(ROOT + "/.index.txt", "w") as f:
+      f.write(str(previous_index + 1))
+
+def decrement_index():
+  previous_index = int(float(read_file()))
+  with mutex:
+    with open(ROOT + "/.index.txt", "w") as f:
+      f.write(str(previous_index - 1))
