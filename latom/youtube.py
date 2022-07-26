@@ -1,6 +1,6 @@
 
 import os
-from multiprocessing import Process
+from multiprocessing import Process, Value
 from os import system
 from time import sleep
 
@@ -10,11 +10,10 @@ from youtubesearchpython import (Channel, ChannelsSearch, Playlist, Video,
                                  VideosSearch, playlist_from_channel_id)
 
 from banner import refresh, rerror
-from constants import PATH
-from services import (checker, decrement_index, get_current_songs,
-                      increment_index, read_file, tracks_list_config)
-from soang import Soang
+from constants import PATH, CORES
+from services import ( checker, get_current_songs, tracks_list_config)
 
+from soang import Soang
 
 def download_youtube_audio(url: str, filename: str) -> None:
   """
@@ -155,31 +154,26 @@ def download_playlist_audios(videos: list) -> None:
 
 def Asynchronous_Download(selected: list) -> None:
 
-  def download(data: tuple):
+  def download(link: str, title: str, threads):
     try:
       try:
-        download_youtube_audio(data[0], data[1])
-      except:
-        download_youtube_audio(data[0], data[1])
+        download_youtube_audio(link, title)
+      except :
+        download_youtube_audio(link, title)
     except :
-      print(f"Error downloading {data[1]}!!!")
-    increment_index()
+      print(f"Error downloading {data}!!!")
+    finally:
+      with threads.get_lock():
+        threads.value += 1
 
+  threads = Value('d', CORES)
   while len(selected):
-    try :
-      index = int(float(read_file()))
-    except:
-      index = 0
-
-    if index == 0:
-      continue
-    else:
-      decrement_index()
+    if threads.value:
+      threads.value -= 1
       video = selected.pop()
       print(video.title)
-      process = Process(target=download, args=((video.link, video.title),))
+      process = Process( target = download , args=(video.link, video.title, threads))
       process.start()
-
 ##! search
 def handle_search_download(query: str) -> Soang:
   console = Console()

@@ -1,5 +1,4 @@
 import os
-from multiprocessing import Lock
 # import urllib.request
 from os import path, system
 
@@ -177,19 +176,4 @@ def rewrite_constants(new: list) -> None:
   # with open(f"{curr}/constants.py", "w") as f:
   #   f.writelines(new)
 
-mutex = Lock()
 
-def read_file():
-  with open(ROOT + "/.index.txt", "r") as f:
-    return f.read()
-def increment_index():
-  previous_index = int(float(read_file()))
-  with mutex:
-    with open(ROOT + "/.index.txt", "w") as f:
-      f.write(str(previous_index + 1))
-
-def decrement_index():
-  previous_index = int(float(read_file()))
-  with mutex:
-    with open(ROOT + "/.index.txt", "w") as f:
-      f.write(str(previous_index - 1))

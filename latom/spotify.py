@@ -1,6 +1,6 @@
 
 import time
-from multiprocessing import Process
+from multiprocessing import Process, Value
 
 import spotipy
 from rich.console import Console
@@ -9,12 +9,10 @@ from spotipy.oauth2 import SpotifyClientCredentials
 
 from auth import CLIENT_ID, CLIENT_SECRET
 from banner import refresh, rerror, resuccess
-from services import (checker, decrement_index, get_current_songs,
-                      increment_index, read_file, set_spotify_auth,
-                      tracks_list_config)
+from services import (checker, get_current_songs, set_spotify_auth, tracks_list_config)
 from soang import Soang
 from youtube import handle_search_download
-
+from constants import CORES
 url_single = "https://open.spotify.com/track/1cEUi8QulMj1xgrPwwGC2p?si=4dd560aa593c447d"
 url_artist = "https://open.spotify.com/artist/3MZsBdqDrRTJihTHQrO6Dq"
 url_album = "https://open.spotify.com/album/3MKvhQoFSrR2PrxXXBHe9B"
@@ -79,7 +77,7 @@ def get_playlist_tracks(tracks: list) -> list:
 
 def Asynchronous_Download(selected: list) -> None:
 
-  def download(data: str):
+  def download(data: str, threads):
     try:
       try:
         handle_search_download(data)
@@ -87,20 +85,17 @@ def Asynchronous_Download(selected: list) -> None:
         handle_search_download(data)
     except :
       print(f"Error downloading {data}!!!")
-    increment_index()
+    finally:
+      with threads.get_lock():
+        threads.value += 1
 
+  threads = Value('d', CORES)
   while len(selected):
-    try :
-      index = int(float(read_file()))
-    except:
-      index = 0
-    if index == 0:
-      continue
-    else:
-      decrement_index()
+    if threads.value:
+      threads.value -= 1
       song = selected.pop()
       print(song)
-      process = Process(target=download, args=(song.title + " - " + song.artist,))
+      process = Process(target=download, args=(song.title + " - " + song.artist, threads))
       process.start()
 
 
